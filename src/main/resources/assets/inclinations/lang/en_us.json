@@ -1,0 +1,15 @@
+{
+  "item.inclinations.copper_nugget": "Copper Nugget",
+  "item.inclinations.platinum_Ingot": "Platinum Ingot",
+  "item.inclinations.platinum_nugget": "Platinum Nugget",
+  "item.inclinations.raw_platinum": "Raw Platinum",
+  "item.inclinations.silver_ingot": "Silver Ingot",
+  "item.inclinations.silver_nugget": "Silver Nugget",
+  "item.inclinations.raw_silver": "Raw Silver",
+
+  "block.inclinations.platinum_block": "Block of Platinum",
+  "block.inclinations.platinum_ore": "Platinum Ore",
+
+  "creativetab.inclinations.inclinations_items": "Inclinations Items",
+  "creativetab.inclinations.inclinations_blocks": "Inclinations Blocks"
+}
