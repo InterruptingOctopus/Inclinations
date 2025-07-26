@@ -1,6 +1,0 @@
-{
-  "parent": "inclinations:block/platinum_ore",
-  "textures": {
-      "all": "inclinations:block/platinum_ore"
-  }
-}
