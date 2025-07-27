@@ -1,5 +1,4 @@
 {
-
   "creativetab.inclinations.inclinations_blocks": "Inclinations Blocks",
   "creativetab.inclinations.inclinations_items": "Inclinations Items",
 
@@ -7,7 +6,7 @@
   "block.inclinations.platinum_ore": "Platinum Ore",
   "block.inclinations.raw_platinum_block": "Block of Raw Platinum",
 
-  "item.inclinations.platinum_Ingot": "Platinum Ingot",
+  "item.inclinations.platinum_ingot": "Platinum Ingot",
   "item.inclinations.platinum_nugget": "Platinum Nugget",
   "item.inclinations.raw_platinum": "Raw Platinum",
 
