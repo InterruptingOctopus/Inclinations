@@ -45,9 +45,15 @@ public class Inclinations {
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
 
-        ModCreativeModeTabs.register(modEventBus);
-        ModItems.register(modEventBus);
-        ModBlocks.register(modEventBus);
+
+        ModBlocks.BLOCKS.register(modEventBus);// Register the DeferredRegister.Blocks to the mod event bus
+        ModItems.ITEMS.register(modEventBus); // Register the DeferredRegister.Items to the mod event bus
+        ModCreativeModeTabs.CREATIVE_MODE_TAB.register(modEventBus); // Register your creative tabs
+
+        // Call the method to register blocks and their items defined in ModBlocks and ModItems
+        ModBlocks.registerBlocks(); // Register blocks
+        ModItems.registerItems();// Register your custom items using the map
+        ModItems.registerBlockItems(); // Register block items
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
@@ -86,6 +92,7 @@ public class Inclinations {
         public static void onClientSetup(FMLClientSetupEvent event) {
 
         }
+
     }
 
 }
