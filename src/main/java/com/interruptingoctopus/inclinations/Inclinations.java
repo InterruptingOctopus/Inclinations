@@ -91,6 +91,16 @@ public class Inclinations {
             event.accept(ModItems.SILVER_NUGGET);
             event.accept(ModItems.RAW_SILVER);
             }
+
+        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
+            event.accept(ModBlocks.PLATINUM_BLOCK);
+            event.accept(ModBlocks.PLATINUM_ORE);
+            event.accept(ModBlocks.RAW_PLATINUM_BLOCK);
+
+            event.accept(ModBlocks.SILVER_BLOCK);
+            event.accept(ModBlocks.SILVER_ORE);
+            event.accept(ModBlocks.RAW_SILVER_BLOCK);
+        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
