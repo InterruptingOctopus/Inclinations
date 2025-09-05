@@ -1,7 +1,7 @@
 {
   "itemGroup.inclinations.blocks_tab": "Your Mod Blocks",
   "itemGroup.inclinations.items_tab": "Your Mod Items",
-//Platinum
+
   "block.inclinations.platinum_block": "Block of Platinum",
   "block.inclinations.platinum_ore": "Platinum Ore",
   "block.inclinations.raw_platinum_block": "Block of Raw Platinum",
@@ -9,7 +9,7 @@
   "item.inclinations.platinum_ingot": "Platinum Ingot",
   "item.inclinations.platinum_nugget": "Platinum Nugget",
   "item.inclinations.raw_platinum": "Raw Platinum",
-//Silver
+
   "block.inclinations.silver_block": "Block of Silver",
   "block.inclinations.silver_ore": "Silver Ore",
   "block.inclinations.raw_silver_block": "Block of Raw Silver",

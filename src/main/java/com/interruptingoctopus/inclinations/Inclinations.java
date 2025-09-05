@@ -1,12 +1,13 @@
 package com.interruptingoctopus.inclinations;
 
+import com.interruptingoctopus.inclinations.Recipe.ModRecipes;
 import com.interruptingoctopus.inclinations.block.ModBlocks;
 import com.interruptingoctopus.inclinations.item.ModCreativeModeTabs;
 import com.interruptingoctopus.inclinations.item.ModItems;
 
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.world.level.ItemLike;
+
 
 import net.minecraft.world.item.CreativeModeTabs;
 
@@ -23,10 +24,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
-
-import static com.interruptingoctopus.inclinations.block.ModBlocks.BLOCKS;
-import static com.interruptingoctopus.inclinations.item.ModItems.ITEMS;
-
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Inclinations.MOD_ID)
@@ -45,15 +42,28 @@ public class Inclinations {
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
 
+        ModCreativeModeTabs.CREATIVE_MODE_TAB.register(modEventBus); // Register your creative tabs
 
         ModBlocks.BLOCKS.register(modEventBus);// Register the DeferredRegister.Blocks to the mod event bus
         ModItems.ITEMS.register(modEventBus); // Register the DeferredRegister.Items to the mod event bus
-        ModCreativeModeTabs.CREATIVE_MODE_TAB.register(modEventBus); // Register your creative tabs
 
-        // Call the method to register blocks and their items defined in ModBlocks and ModItems
-        ModBlocks.registerBlocks(); // Register blocks
-        ModItems.registerItems();// Register your custom items using the map
-        ModItems.registerBlockItems(); // Register block items
+//      ModDataComponents.register(modEventBus);
+//      ModSounds.register(modEventBus);
+//
+//      ModEffects.register(modEventBus);
+//      ModPotions.register(modEventBus);
+//
+//      ModEnchantmentEffects.register(modEventBus);
+//      ModEntities.register(modEventBus);
+//
+//      ModVillagers.register(modEventBus);
+//      ModParticles.register(modEventBus);
+//
+//      ModLootModifiers.register(modEventBus);
+//      ModBlockEntities.register(modEventBus);
+//
+//      ModMenuTypes.register(modEventBus);
+        ModRecipes.register(modEventBus);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
@@ -71,12 +81,16 @@ public class Inclinations {
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
 
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            ITEMS.getEntries().forEach(i -> event.accept((ItemLike) i));
-        }
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
-            BLOCKS.getEntries().forEach(i -> event.accept((ItemLike) i));
-        }
-
+            //event.accept(ModItems.);
+            //Platinum
+            event.accept(ModItems.PLATINUM_INGOT);
+            event.accept(ModItems.PLATINUM_NUGGET);
+            event.accept(ModItems.RAW_PLATINUM);
+            //Silver
+            event.accept(ModItems.SILVER_INGOT);
+            event.accept(ModItems.SILVER_NUGGET);
+            event.accept(ModItems.RAW_SILVER);
+            }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
