@@ -11,8 +11,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
-
 import java.util.stream.Stream;
 
 public class ModModelProvider extends ModelProvider {
