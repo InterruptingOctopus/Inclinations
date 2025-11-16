@@ -1,41 +1,42 @@
 package com.interruptingoctopus.inclinations.item;
 
 import com.interruptingoctopus.inclinations.Inclinations;
-import com.interruptingoctopus.inclinations.block.ModBlocks;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Locale;
 
 public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Inclinations.MOD_ID);
 
-    //Platinum
-    public static final DeferredItem<Item> PLATINUM_INGOT = ITEMS.registerItem( "platinum_ingot",
-            Item::new, new Item.Properties());
+    // --- Item Definitions ---
+    // The enum handles the registration, deriving the lowercase name from the enum constant's name.
+    private enum ItemDef {
+        PLATINUM_INGOT,
+        PLATINUM_NUGGET,
+        RAW_PLATINUM,
+        SILVER_INGOT,
+        SILVER_NUGGET,
+        RAW_SILVER;
 
-    public static final DeferredItem<Item> PLATINUM_NUGGET = ITEMS.registerItem( "platinum_nugget",
-            Item::new, new Item.Properties());
+        private final DeferredItem<Item> holder;
 
-    public static final DeferredItem<Item> RAW_PLATINUM = ITEMS.registerItem( "raw_platinum",
-            Item::new, new Item.Properties());
+        ItemDef() {
+            this.holder = ITEMS.registerItem(this.name().toLowerCase(Locale.ROOT), Item::new, new Item.Properties());
+        }
 
-    //Silver
-    public static final DeferredItem<Item> SILVER_INGOT = ITEMS.registerItem( "silver_ingot",
-            Item::new, new Item.Properties());
-
-    public static final DeferredItem<Item> SILVER_NUGGET = ITEMS.registerItem( "silver_nugget",
-            Item::new, new Item.Properties());
-
-    public static final DeferredItem<Item> RAW_SILVER = ITEMS.registerItem( "raw_silver",
-            Item::new, new Item.Properties());
-    public static void register(IEventBus eventBus) {
-        ITEMS.register(eventBus);
+        public DeferredItem<Item> getHolder() {
+            return holder;
+        }
     }
-}
 
+    // --- Static Fields for easy access from other classes ---
+    // These fields just point to the holders created in the enum, maintaining compatibility.
+    public static final DeferredItem<Item> PLATINUM_INGOT = ItemDef.PLATINUM_INGOT.getHolder();
+    public static final DeferredItem<Item> PLATINUM_NUGGET = ItemDef.PLATINUM_NUGGET.getHolder();
+    public static final DeferredItem<Item> RAW_PLATINUM = ItemDef.RAW_PLATINUM.getHolder();
+    public static final DeferredItem<Item> SILVER_INGOT = ItemDef.SILVER_INGOT.getHolder();
+    public static final DeferredItem<Item> SILVER_NUGGET = ItemDef.SILVER_NUGGET.getHolder();
+    public static final DeferredItem<Item> RAW_SILVER = ItemDef.RAW_SILVER.getHolder();
+}
