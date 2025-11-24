@@ -21,10 +21,10 @@ public class PlayerAttributeMenuTabButton extends Button {
 
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        ResourceLocation tabSprite = isSelected() 
-            ? ResourceLocation.withDefaultNamespace("container/creative_inventory/tab_top_selected_1")
-            : ResourceLocation.withDefaultNamespace("container/creative_inventory/tab_top_unselected_1");
-        
+        ResourceLocation tabSprite = isSelected()
+                ? ResourceLocation.withDefaultNamespace("container/creative_inventory/tab_top_selected_1")
+                : ResourceLocation.withDefaultNamespace("container/creative_inventory/tab_top_unselected_1");
+
         guiGraphics.blitSprite(tabSprite, this.getX(), this.getY(), this.width, this.height);
         guiGraphics.blitSprite(this.iconSprite, this.getX() + 6, this.getY() + 8, 16, 16);
     }

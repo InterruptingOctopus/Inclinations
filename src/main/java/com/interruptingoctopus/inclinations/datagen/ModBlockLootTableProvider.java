@@ -15,8 +15,8 @@ import java.util.Collections;
 public class ModBlockLootTableProvider extends BlockLootSubProvider {
     public ModBlockLootTableProvider(HolderLookup.Provider pRegistries) {
         super(Collections.emptySet(), // pKnownItems (we don't have custom items that need loot tables here)
-              FeatureFlags.REGISTRY.allFlags(), // pFeatureFlags
-              pRegistries); // pRegistries
+                FeatureFlags.REGISTRY.allFlags(), // pFeatureFlags
+                pRegistries); // pRegistries
     }
 
     @Override

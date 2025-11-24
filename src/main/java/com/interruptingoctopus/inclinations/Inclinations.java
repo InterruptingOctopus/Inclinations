@@ -45,7 +45,7 @@ public class Inclinations {
 
         // Register ourselves for server and other game events we are interested in (Game Bus)
         NeoForge.EVENT_BUS.register(this); // This registers @SubscribeEvent methods in this class
-        
+
         // Register ModEvents to the mod event bus for client-side events
         modEventBus.addListener(ModEvents::registerClientEvents);
         // Removed: modEventBus.addListener(ModEvents::onRegisterGuiLayers); // Removed listener for GUI layer registration

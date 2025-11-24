@@ -37,7 +37,7 @@ public class ModCustomOverlay {
 
         for (int i = 0; i < 10; ++i) {
             int iconX = left + i * 8;
-            
+
             ResourceLocation emptySprite;
             ResourceLocation halfSprite;
             ResourceLocation fullSprite;

@@ -28,7 +28,7 @@ public class ModEvents {
     private static final ResourceLocation ARMOR_FULL_SPRITE = ResourceLocation.withDefaultNamespace("hud/armor_full");
     // Define a ResourceLocation for our new custom inventory tab
     public static final ResourceLocation ARMOR_ATTRIBUTE_TAB_ID = ResourceLocation.fromNamespaceAndPath(Inclinations.MOD_ID, "armor_attribute_tab");
-    
+
     // Crafting menu tab
     public static final ResourceLocation CRAFTING_MENU_TAB_ID = ResourceLocation.fromNamespaceAndPath(Inclinations.MOD_ID, "crafting_menu_tab");
 
@@ -50,7 +50,7 @@ public class ModEvents {
     private static void onRenderGuiPre(RenderGuiLayerEvent.Pre event) {
         // Cancel vanilla armor and food level rendering
         if (event.getName().equals(VanillaGuiLayers.ARMOR_LEVEL) ||
-            event.getName().equals(VanillaGuiLayers.FOOD_LEVEL)) {
+                event.getName().equals(VanillaGuiLayers.FOOD_LEVEL)) {
             event.setCanceled(true);
         }
     }
@@ -94,13 +94,13 @@ public class ModEvents {
         int tabY = inventoryScreen.getGuiTop() - 30;
 
         return new PlayerAttributeMenuTabButton(
-            tabX, tabY,
-            ARMOR_ATTRIBUTE_TAB_ID,
-            ARMOR_FULL_SPRITE,
-            button -> {
-                currentActiveTab = ARMOR_ATTRIBUTE_TAB_ID;
-                LOGGER.info("Armor Attribute Tab clicked! Setting active tab to: {}", ARMOR_ATTRIBUTE_TAB_ID);
-            }
+                tabX, tabY,
+                ARMOR_ATTRIBUTE_TAB_ID,
+                ARMOR_FULL_SPRITE,
+                button -> {
+                    currentActiveTab = ARMOR_ATTRIBUTE_TAB_ID;
+                    LOGGER.info("Armor Attribute Tab clicked! Setting active tab to: {}", ARMOR_ATTRIBUTE_TAB_ID);
+                }
         );
     }
 
@@ -109,13 +109,13 @@ public class ModEvents {
         int tabY = inventoryScreen.getGuiTop() - 30;
 
         return new CraftingMenuTabButton(
-            tabX, tabY,
-            CRAFTING_MENU_TAB_ID,
-            new ItemStack(Items.CRAFTING_TABLE),
-            button -> {
-                currentActiveTab = CRAFTING_MENU_TAB_ID;
-                LOGGER.info("Crafting Menu Tab clicked! Setting active tab to: {}", CRAFTING_MENU_TAB_ID);
-            }
+                tabX, tabY,
+                CRAFTING_MENU_TAB_ID,
+                new ItemStack(Items.CRAFTING_TABLE),
+                button -> {
+                    currentActiveTab = CRAFTING_MENU_TAB_ID;
+                    LOGGER.info("Crafting Menu Tab clicked! Setting active tab to: {}", CRAFTING_MENU_TAB_ID);
+                }
         );
     }
 }

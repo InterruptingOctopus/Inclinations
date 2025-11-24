@@ -68,8 +68,6 @@ public class ModItems {
         return REGISTERED_ITEMS.get(name);
     }
 
-
-
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }
