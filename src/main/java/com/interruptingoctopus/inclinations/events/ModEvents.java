@@ -16,6 +16,8 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class ModEvents {
 
@@ -28,7 +30,6 @@ public class ModEvents {
     public static final ResourceLocation ARMOR_ATTRIBUTE_TAB_ID = ResourceLocation.fromNamespaceAndPath(Inclinations.MOD_ID, "armor_attribute_tab");
     
     // Crafting menu tab
-    private static final ResourceLocation CRAFTING_TABLE_SPRITE = ResourceLocation.withDefaultNamespace("item/crafting_table");
     public static final ResourceLocation CRAFTING_MENU_TAB_ID = ResourceLocation.fromNamespaceAndPath(Inclinations.MOD_ID, "crafting_menu_tab");
 
     // Static field to track the currently active custom tab
@@ -41,7 +42,6 @@ public class ModEvents {
         NeoForge.EVENT_BUS.addListener(ModEvents::onRenderGuiPost);
         // Register ScreenEvent.Render.Pre listener for inventory screen modifications
         NeoForge.EVENT_BUS.addListener(ModEvents::onScreenRenderPre);
-        // Register ScreenEvent.Render.Post listener for inventory screen modifications
         NeoForge.EVENT_BUS.addListener(ModEvents::onScreenRenderPost);
         // Register ScreenEvent.Init.Post listener for adding custom buttons to screens
         NeoForge.EVENT_BUS.addListener(ModEvents::onScreenInitPost);
@@ -111,7 +111,7 @@ public class ModEvents {
         return new CraftingMenuTabButton(
             tabX, tabY,
             CRAFTING_MENU_TAB_ID,
-            CRAFTING_TABLE_SPRITE,
+            new ItemStack(Items.CRAFTING_TABLE),
             button -> {
                 currentActiveTab = CRAFTING_MENU_TAB_ID;
                 LOGGER.info("Crafting Menu Tab clicked! Setting active tab to: {}", CRAFTING_MENU_TAB_ID);

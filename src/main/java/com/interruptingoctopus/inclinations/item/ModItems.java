@@ -49,13 +49,17 @@ public class ModItems {
         // Register regular items
         METALS.forEach(ModItems::registerMetalItems);
         REGISTERED_ITEMS.put("screw_driver", SCREW_DRIVER);
+        REGISTERED_ITEMS.put("altar", ALTAR); // Add altar to the map
+    }
 
-        // Register BlockItems and add them to the map for data-gen
-        // Do NOT add "altar" to REGISTERED_ITEMS here, as it's handled manually.
-        // REGISTERED_ITEMS.put("altar", ALTAR); // This line is removed
+    // New method to register BlockItems, called after ModBlocks are fully registered
+    public static void registerBlockItems() {
         ModBlocks.REGISTERED_BLOCKS.forEach((name, block) -> {
-            DeferredItem<Item> blockItem = ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
-            REGISTERED_ITEMS.put(name, blockItem);
+            // Only register if not already registered (e.g., ALTAR is registered manually)
+            if (!REGISTERED_ITEMS.containsKey(name)) {
+                DeferredItem<Item> blockItem = ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+                REGISTERED_ITEMS.put(name, blockItem);
+            }
         });
     }
 

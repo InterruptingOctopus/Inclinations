@@ -37,7 +37,7 @@ public class Inclinations {
         // IMPORTANT: ModBlocks must be registered before ModItems due to BlockItem dependencies.
         ModBlocks.register(modEventBus); // Blocks and their BlockItems are registered here
         ModItems.register(modEventBus);  // Pure items are registered here
-        // Removed: ModBlockItems.register(modEventBus); // Removed incorrect ModBlockItems registration
+        ModItems.registerBlockItems(); // Call this to register BlockItems after blocks are registered
         ModRecipes.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
         ModMenuTypes.register(modEventBus);
