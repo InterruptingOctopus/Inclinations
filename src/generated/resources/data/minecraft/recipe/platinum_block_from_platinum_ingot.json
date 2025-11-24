@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "inclinations:platinum_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "inclinations:platinum_ingot"
+  }
+}

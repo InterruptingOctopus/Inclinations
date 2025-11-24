@@ -1,0 +1,4 @@
+// 1.21.1	2025-11-19T05:11:04.0400222	Tags for minecraft:item mod id inclinations
+75e7379ecbf270181d19256379e5545ccbca4a87 data/forge/tags/item/ingots.json
+78609930d3000c8835c296ea616b05bae4121baf data/forge/tags/item/ingots/platinum.json
+2910f231f3d74a9a519ac0693a18805266e576de data/forge/tags/item/ingots/silver.json

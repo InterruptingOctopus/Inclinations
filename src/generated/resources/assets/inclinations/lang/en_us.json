@@ -1,0 +1,18 @@
+{
+  "block.inclinations.platinum_block": "Block of Platinum",
+  "block.inclinations.platinum_ore": "Platinum Ore",
+  "block.inclinations.raw_platinum_block": "Block of Raw_platinum",
+  "block.inclinations.raw_silver_block": "Block of Raw_silver",
+  "block.inclinations.silver_block": "Block of Silver",
+  "block.inclinations.silver_ore": "Silver Ore",
+  "container.inclinations.altar": "Altar",
+  "creativetab.inclinations_building_blocks_tab": "Inclinations: Building Blocks",
+  "creativetab.inclinations_ingredients_tab": "Inclinations: Ingredients",
+  "item.inclinations.platinum_ingot": "Platinum Ingot",
+  "item.inclinations.platinum_nugget": "Platinum Nugget",
+  "item.inclinations.raw_platinum": "Raw Platinum",
+  "item.inclinations.raw_silver": "Raw Silver",
+  "item.inclinations.screw_driver": "Screwdriver",
+  "item.inclinations.silver_ingot": "Silver Ingot",
+  "item.inclinations.silver_nugget": "Silver Nugget"
+}

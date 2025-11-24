@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": {
+      "item": "minecraft:lectern"
+    },
+    "Q": {
+      "item": "minecraft:quartz_block"
+    },
+    "R": {
+      "item": "minecraft:red_carpet"
+    },
+    "W": {
+      "item": "minecraft:white_carpet"
+    }
+  },
+  "pattern": [
+    "R W",
+    "QLQ",
+    " Q "
+  ],
+  "result": {
+    "count": 1,
+    "id": "inclinations:altar"
+  }
+}

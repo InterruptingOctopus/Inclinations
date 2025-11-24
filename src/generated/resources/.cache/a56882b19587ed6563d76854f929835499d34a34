@@ -1,0 +1,4 @@
+// 1.21.1	2025-11-24T03:56:14.5634532	Tags for minecraft:block mod id inclinations
+3ca416a9503ca306649e967328f3b4ec548445bc data/minecraft/tags/block/mineable/pickaxe.json
+b8349ca0d9f4b9881598051ae834d42678443ad2 data/minecraft/tags/block/needs_diamond_tool.json
+23cac8c2a069b17f0a13253206de583a8483808d data/minecraft/tags/block/needs_iron_tool.json
