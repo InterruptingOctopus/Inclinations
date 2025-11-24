@@ -21,7 +21,7 @@ public class ModCreativeModeTabs {
     @SuppressWarnings("unused")
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> INCLINATIONS_INGREDIENTS_TAB = registerCreativeTab(
             "inclinations_ingredients_tab",
-            () -> new ItemStack(ModItems.get("platinum_ingot").get()),
+            () -> new ItemStack(ModItems.REGISTERED_ITEMS.get("platinum_ingot").get()),
             (params, output) -> {
                 // Add all non-block items from the central map
                 ModItems.REGISTERED_ITEMS.values().forEach(item -> {
@@ -35,7 +35,7 @@ public class ModCreativeModeTabs {
     @SuppressWarnings("unused")
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> INCLINATIONS_BUILDING_BLOCKS_TAB = registerCreativeTab(
             "inclinations_building_blocks_tab",
-            () -> new ItemStack(ModBlocks.get("platinum_block").get()),
+            () -> new ItemStack(ModBlocks.REGISTERED_BLOCKS.get("platinum_block").get()),
             (params, output) -> {
                 // Add all block items from the central map
                 ModItems.REGISTERED_ITEMS.values().forEach(item -> {

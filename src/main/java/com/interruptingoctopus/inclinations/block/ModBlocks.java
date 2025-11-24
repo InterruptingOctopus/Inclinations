@@ -42,10 +42,9 @@ public class ModBlocks {
     }
 
     // Helper to register a single block and add it to the map for automatic item registration
-    private static DeferredBlock<Block> registerBlock(String name, Supplier<Block> blockSupplier) {
+    private static void registerBlock(String name, Supplier<Block> blockSupplier) {
         DeferredBlock<Block> block = BLOCKS.register(name, blockSupplier);
         REGISTERED_BLOCKS.put(name, block);
-        return block;
     }
 
     // Helper to register a block without adding it to the automatic item registration map
