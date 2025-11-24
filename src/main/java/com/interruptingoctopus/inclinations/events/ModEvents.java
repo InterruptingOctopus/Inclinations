@@ -3,6 +3,7 @@ package com.interruptingoctopus.inclinations.events;
 import com.interruptingoctopus.inclinations.Inclinations;
 import com.interruptingoctopus.inclinations.client.gui.CraftingMenuTabButton;
 import com.interruptingoctopus.inclinations.client.gui.ModCustomOverlay;
+import com.interruptingoctopus.inclinations.client.gui.PlayerAttributeMenuRenderer;
 import com.interruptingoctopus.inclinations.client.gui.PlayerAttributeMenuTabButton;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -31,6 +32,9 @@ public class ModEvents {
 
     // Crafting menu tab
     public static final ResourceLocation CRAFTING_MENU_TAB_ID = ResourceLocation.fromNamespaceAndPath(Inclinations.MOD_ID, "crafting_menu_tab");
+
+    // Survival inventory tab
+    public static final ResourceLocation SURVIVAL_INVENTORY_TAB_ID = ResourceLocation.fromNamespaceAndPath(Inclinations.MOD_ID, "survival_inventory_tab");
 
     // Static field to track the currently active custom tab
     public static ResourceLocation currentActiveTab = null;
@@ -70,10 +74,19 @@ public class ModEvents {
         }
     }
 
+    @SuppressWarnings("unused")
     private static void onScreenRenderPre(ScreenEvent.Render.Pre event) {
     }
 
     private static void onScreenRenderPost(ScreenEvent.Render.Post event) {
+        if (event.getScreen() instanceof InventoryScreen inventoryScreen) {
+            GuiGraphics guiGraphics = event.getGuiGraphics();
+            
+            if (SURVIVAL_INVENTORY_TAB_ID.equals(currentActiveTab)) {
+                PlayerAttributeMenuRenderer.render(guiGraphics,
+                        inventoryScreen.getGuiLeft(), inventoryScreen.getGuiTop());
+            }
+        }
     }
 
     private static void onScreenInitPost(ScreenEvent.Init.Post event) {
@@ -86,6 +99,7 @@ public class ModEvents {
             // Create and add our custom tab buttons
             event.addListener(createCraftingTabButton(inventoryScreen));
             event.addListener(createArmorTabButton(inventoryScreen));
+            event.addListener(createSurvivalInventoryTabButton(inventoryScreen));
         }
     }
 
@@ -115,6 +129,21 @@ public class ModEvents {
                 button -> {
                     currentActiveTab = CRAFTING_MENU_TAB_ID;
                     LOGGER.info("Crafting Menu Tab clicked! Setting active tab to: {}", CRAFTING_MENU_TAB_ID);
+                }
+        );
+    }
+
+    private static PlayerAttributeMenuTabButton createSurvivalInventoryTabButton(InventoryScreen inventoryScreen) {
+        int tabX = inventoryScreen.getGuiLeft() + 84;
+        int tabY = inventoryScreen.getGuiTop() - 30;
+
+        return new PlayerAttributeMenuTabButton(
+                tabX, tabY,
+                SURVIVAL_INVENTORY_TAB_ID,
+                ResourceLocation.withDefaultNamespace("hud/armor_full"),
+                button -> {
+                    currentActiveTab = SURVIVAL_INVENTORY_TAB_ID;
+                    LOGGER.info("Survival Inventory Tab clicked! Setting active tab to: {}", SURVIVAL_INVENTORY_TAB_ID);
                 }
         );
     }
