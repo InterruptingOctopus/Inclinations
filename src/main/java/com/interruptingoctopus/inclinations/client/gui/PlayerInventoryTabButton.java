@@ -1,8 +1,9 @@
 package com.interruptingoctopus.inclinations.client.gui;
 
-import com.interruptingoctopus.inclinations.events.ModEvents;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -10,13 +11,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class CraftingMenuTabButton extends Button {
-    private final ResourceLocation tabId;
+public class PlayerInventoryTabButton extends Button {
     private final ItemStack iconItem;
 
-    public CraftingMenuTabButton(int x, int y, ResourceLocation tabId, ItemStack iconItem, OnPress onPress) {
+    public PlayerInventoryTabButton(int x, int y, ItemStack iconItem, OnPress onPress) {
         super(x, y, 28, 32, Component.empty(), onPress, DEFAULT_NARRATION);
-        this.tabId = tabId;
         this.iconItem = iconItem;
     }
 
@@ -31,6 +30,6 @@ public class CraftingMenuTabButton extends Button {
     }
 
     public boolean isSelected() {
-        return this.tabId.equals(ModEvents.currentActiveTab);
+        return Minecraft.getInstance().screen instanceof InventoryScreen;
     }
 }
