@@ -21,6 +21,18 @@ public class PlayerInventoryTabButton extends Button {
 
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Only render if the tab is NOT selected. The active tab will be rendered separately.
+        if (!isSelected()) {
+            renderTabBackgroundAndIcon(guiGraphics);
+        }
+    }
+
+    public void renderActiveTab(GuiGraphics guiGraphics) {
+        // This method is called specifically to render the active tab on top.
+        renderTabBackgroundAndIcon(guiGraphics);
+    }
+
+    private void renderTabBackgroundAndIcon(GuiGraphics guiGraphics) {
         ResourceLocation tabSprite = isSelected()
                 ? ResourceLocation.withDefaultNamespace("container/creative_inventory/tab_top_selected_1")
                 : ResourceLocation.withDefaultNamespace("container/creative_inventory/tab_top_unselected_1");

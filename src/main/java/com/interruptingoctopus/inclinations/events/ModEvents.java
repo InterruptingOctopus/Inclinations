@@ -7,25 +7,26 @@ import com.interruptingoctopus.inclinations.client.gui.PlayerInventoryTabButton;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 public class ModEvents {
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final ModCustomOverlay CUSTOM_HUNGER_OVERLAY = new ModCustomOverlay();
 
-    // Define a ResourceLocation for the player attribute menu tab
-    private static final ResourceLocation PLAYER_ATTRIBUTE_ICON = ResourceLocation.withDefaultNamespace("hud/heart_full");
+    // Fields to hold references to our custom tab buttons
+    private static PlayerInventoryTabButton inventoryTabButton;
+    private static PlayerAttributeMenuTabButton attributeTabButton;
 
     @SuppressWarnings("unused")
     public static void registerClientEvents(final FMLClientSetupEvent event) {
@@ -35,6 +36,7 @@ public class ModEvents {
         NeoForge.EVENT_BUS.addListener(ModEvents::onRenderGuiPost);
         // Register ScreenEvent.Render.Pre listener for inventory screen modifications
         NeoForge.EVENT_BUS.addListener(ModEvents::onScreenRenderPre);
+        // Register ScreenEvent.Render.Post listener for rendering active tabs on top
         NeoForge.EVENT_BUS.addListener(ModEvents::onScreenRenderPost);
         // Register ScreenEvent.Init.Post listener for adding custom buttons to screens
         NeoForge.EVENT_BUS.addListener(ModEvents::onScreenInitPost);
@@ -67,8 +69,15 @@ public class ModEvents {
     private static void onScreenRenderPre(ScreenEvent.Render.Pre event) {
     }
 
-    @SuppressWarnings("unused")
     private static void onScreenRenderPost(ScreenEvent.Render.Post event) {
+        // After everything else is rendered, find the active tab and render it on top.
+        for (Renderable renderable : event.getScreen().renderables) {
+            if (renderable instanceof PlayerInventoryTabButton tabButton && tabButton.isSelected()) {
+                tabButton.renderActiveTab(event.getGuiGraphics());
+            } else if (renderable instanceof PlayerAttributeMenuTabButton tabButton && tabButton.isSelected()) {
+                tabButton.renderActiveTab(event.getGuiGraphics());
+            }
+        }
     }
 
     private static void onScreenInitPost(ScreenEvent.Init.Post event) {
@@ -89,8 +98,11 @@ public class ModEvents {
         }
 
         if (shouldAddButtons) {
-            event.addListener(createPlayerInventoryTabButton(guiLeft, guiTop));
-            event.addListener(createPlayerAttributeMenuTabButton(guiLeft, guiTop));
+            inventoryTabButton = createPlayerInventoryTabButton(guiLeft, guiTop);
+            event.addListener(inventoryTabButton);
+
+            attributeTabButton = createPlayerAttributeMenuTabButton(guiLeft, guiTop);
+            event.addListener(attributeTabButton);
         }
     }
 
@@ -117,7 +129,7 @@ public class ModEvents {
 
         return new PlayerAttributeMenuTabButton(
                 tabX, tabY,
-                PLAYER_ATTRIBUTE_ICON,
+                new ItemStack(Items.IRON_SWORD),
                 button -> {
                     Minecraft minecraft = Minecraft.getInstance();
                     if (!(minecraft.screen instanceof PlayerAttributeMenuScreen) && minecraft.player != null) {

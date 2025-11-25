@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 public class PlayerAttributeMenuScreen extends Screen {
     private static final ResourceLocation PLAYER_ATTRIBUTE_MENU_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Inclinations.MOD_ID, "textures/gui/container/player_attribute_menu.png");
-    private static final ResourceLocation HEALTH_ICON = ResourceLocation.withDefaultNamespace("hud/heart_full");
+    private static final ResourceLocation HEALTH_ICON = ResourceLocation.withDefaultNamespace("hud/heart/full");
     private static final ResourceLocation HUNGER_ICON = ResourceLocation.withDefaultNamespace("hud/food_full");
     private static final ResourceLocation ARMOR_ICON = ResourceLocation.withDefaultNamespace("hud/armor_full");
 
@@ -45,7 +45,7 @@ public class PlayerAttributeMenuScreen extends Screen {
             if (player != null) {
                 int startX = this.guiLeft + 20;
                 int startY = this.guiTop + 20;
-                int spacing = 18;
+                int spacing = 12; // Reduced spacing for a tighter layout
 
                 int health = (int) Math.ceil(player.getHealth());
                 int hunger = player.getFoodData().getFoodLevel();
@@ -59,8 +59,8 @@ public class PlayerAttributeMenuScreen extends Screen {
     }
 
     private void renderAttribute(@Nonnull GuiGraphics guiGraphics, int x, int y, @Nonnull ResourceLocation icon, int value) {
-        guiGraphics.blitSprite(icon, x, y, 16, 16);
-        guiGraphics.drawString(this.font, String.valueOf(value), x + 20, y + 5, 0xFFFFFF);
+        guiGraphics.blitSprite(icon, x, y, 9, 9);
+        guiGraphics.drawString(this.font, String.valueOf(value), x + 12, y + 1, 0xFFFFFF);
     }
 
     @Override
