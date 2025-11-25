@@ -30,6 +30,6 @@ public class PlayerAttributeMenuTabButton extends Button {
     }
 
     public boolean isSelected() {
-        return this.tabId.equals(ModEvents.currentActiveTab);
+        return false;
     }
 }
