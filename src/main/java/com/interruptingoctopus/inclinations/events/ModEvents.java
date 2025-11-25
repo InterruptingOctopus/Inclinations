@@ -1,6 +1,5 @@
 package com.interruptingoctopus.inclinations.events;
 
-import com.interruptingoctopus.inclinations.Inclinations;
 import com.interruptingoctopus.inclinations.client.gui.ModCustomOverlay;
 import com.interruptingoctopus.inclinations.client.gui.PlayerAttributeMenuScreen;
 import com.interruptingoctopus.inclinations.client.gui.PlayerAttributeMenuTabButton;
@@ -28,7 +27,8 @@ public class ModEvents {
     // Define a ResourceLocation for the player attribute menu tab
     private static final ResourceLocation PLAYER_ATTRIBUTE_ICON = ResourceLocation.withDefaultNamespace("hud/heart_full");
 
-    public static void registerClientEvents(final FMLClientSetupEvent event) { // Kept event parameter as it's standard for FMLClientSetupEvent
+    @SuppressWarnings("unused")
+    public static void registerClientEvents(final FMLClientSetupEvent event) {
         LOGGER.info("Registering client events for Inclinations mod.");
         // Register RenderGuiLayerEvent listeners for HUD modifications
         NeoForge.EVENT_BUS.addListener(ModEvents::onRenderGuiPre);
