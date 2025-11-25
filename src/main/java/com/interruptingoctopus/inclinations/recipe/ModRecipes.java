@@ -1,4 +1,4 @@
-package com.interruptingoctopus.inclinations.recipe;
+package com.interruptingoctopus.inclinations.Recipe;
 
 import com.interruptingoctopus.inclinations.Inclinations;
 import net.minecraft.core.registries.Registries;
