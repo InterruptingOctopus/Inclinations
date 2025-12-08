@@ -1,7 +1,0 @@
-// 1.21.1	2025-11-24T03:56:14.5598904	Loot Tables
-279985d159f1588e5ee4f4540ed3f9a1f4405dd6 data/inclinations/loot_table/blocks/platinum_block.json
-b9735a32c02309583ee182606143591095f8d1dc data/inclinations/loot_table/blocks/platinum_ore.json
-db06c9ec02c53cde642dd0dc0b3952c1d35281e2 data/inclinations/loot_table/blocks/raw_platinum_block.json
-53c14670360fa3c9d38e6a95b468d10ff6047379 data/inclinations/loot_table/blocks/raw_silver_block.json
-6e513534410b0481efe8242f9b36f3c00d1217d7 data/inclinations/loot_table/blocks/silver_block.json
-b3011573a097f6d25cb1b4f8b713d9824818e22d data/inclinations/loot_table/blocks/silver_ore.json

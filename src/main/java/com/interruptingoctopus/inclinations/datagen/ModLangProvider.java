@@ -3,15 +3,27 @@ package com.interruptingoctopus.inclinations.datagen;
 import com.interruptingoctopus.inclinations.Inclinations;
 import com.interruptingoctopus.inclinations.block.ModBlocks;
 import com.interruptingoctopus.inclinations.item.ModItems;
+import com.interruptingoctopus.inclinations.util.ModMetals;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
+/**
+ * Data provider for generating language translations for the mod.
+ */
 public class ModLangProvider extends LanguageProvider {
 
+    /**
+     * Constructor for ModLangProvider.
+     *
+     * @param output The pack output.
+     */
     public ModLangProvider(PackOutput output) {
         super(output, Inclinations.MOD_ID, "en_us");
     }
 
+    /**
+     * Adds all translations for the mod's items, blocks, and creative tabs.
+     */
     @Override
     protected void addTranslations() {
         // Add translation for the screwdriver
@@ -21,7 +33,7 @@ public class ModLangProvider extends LanguageProvider {
         add("container.inclinations.altar", "Altar");
 
         // Dynamically add translations for items
-        ModItems.METALS.forEach(metalName -> {
+        ModMetals.METALS.keySet().forEach(metalName -> { // Use ModMetals.METALS
             add(ModItems.get(metalName + "_ingot").get(), capitalize(metalName) + " Ingot");
             add(ModItems.get(metalName + "_nugget").get(), capitalize(metalName) + " Nugget");
             add(ModItems.get("raw_" + metalName).get(), "Raw " + capitalize(metalName));
@@ -29,8 +41,6 @@ public class ModLangProvider extends LanguageProvider {
 
         // Dynamically add translations for blocks
         ModBlocks.REGISTERED_BLOCKS.forEach((name, deferredBlock) -> {
-            // Skip the custom lightning rod as it's handled above
-
             String displayName = capitalize(name.replace("_", " "));
             if (name.endsWith("_block")) {
                 displayName = "Block of " + capitalize(name.substring(0, name.indexOf("_block")));
@@ -47,7 +57,11 @@ public class ModLangProvider extends LanguageProvider {
         add("creativetab.inclinations_building_blocks_tab", "Inclinations: Building Blocks");
     }
 
-    // Helper method to capitalize the first letter of each word
+    /**
+     * Helper method to capitalize the first letter of each word in a string.
+     * @param text The input string.
+     * @return The capitalized string.
+     */
     private String capitalize(String text) {
         if (text == null || text.isEmpty()) {
             return text;

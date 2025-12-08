@@ -1,49 +1,63 @@
 package com.interruptingoctopus.inclinations.datagen;
 
+import com.interruptingoctopus.inclinations.Inclinations;
 import com.interruptingoctopus.inclinations.block.ModBlocks;
 import com.interruptingoctopus.inclinations.item.ModItems;
+import com.interruptingoctopus.inclinations.util.ModMetals;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.*;
-import net.minecraft.world.item.Items; // Import Items
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class ModRecipeProvider extends RecipeProvider implements IConditionBuilder {
+/**
+ * Data provider for generating recipes for the mod.
+ */
+public class ModRecipeProvider extends RecipeProvider { // Outer class extends RecipeProvider
+    public ModRecipeProvider(HolderLookup.Provider provider, RecipeOutput recipeOutput) {
+        super(provider, recipeOutput);
+    }
 
-    // Specific values for Platinum
-    private static final float PLATINUM_ORE_XP = 1.0f; // Higher XP for platinum
-    private static final int PLATINUM_SMELTING_TIME = 200;
-    private static final int PLATINUM_BLASTING_TIME = 100;
+    /**
+     * Inner static class that extends RecipeProvider.Runner to build recipes.
+     */
+    public static class Runner extends RecipeProvider.Runner {
+        public Runner(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> provider) {
+            super(packOutput, provider);
+        }
 
-    // Specific values for Silver
-    private static final float SILVER_ORE_XP = 0.8f; // Slightly higher than default, less than platinum
-    private static final int SILVER_SMELTING_TIME = 200;
-    private static final int SILVER_BLASTING_TIME = 100;
+        @Override
+        protected @NotNull RecipeProvider createRecipeProvider(HolderLookup.@NotNull Provider provider, @NotNull RecipeOutput recipeOutput) {
+            return new ModRecipeProvider(provider, recipeOutput);
+        }
 
-
-    public ModRecipeProvider(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pRegistries) {
-        super(pOutput, pRegistries);
+        @Override
+        public @NotNull String getName() {
+            return "Inclinations Recipes";
+        }
     }
 
     @Override
-    protected void buildRecipes(@NotNull RecipeOutput pRecipeOutput) {
+    protected void buildRecipes() {
         // --- Screwdriver Recipe ---
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.SCREW_DRIVER.get())
+        shaped(RecipeCategory.TOOLS, ModItems.SCREW_DRIVER.get())
                 .pattern(" N ")
                 .pattern(" N ")
                 .pattern(" C ")
                 .define('N', Items.IRON_NUGGET)
                 .define('C', Items.COPPER_INGOT)
-                .unlockedBy("has_copper_ingot", has(Items.COPPER_INGOT))
-                .save(pRecipeOutput);
+                .unlockedBy("has_copper_ingot", has(Items.COPPER_INGOT)).save(output);
 
         // --- Altar Recipe ---
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.ALTAR.get())
+        shaped(RecipeCategory.DECORATIONS, ModBlocks.ALTAR.get())
                 .pattern("R W")
                 .pattern("QLQ")
                 .pattern(" Q ")
@@ -51,67 +65,78 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('W', Items.WHITE_CARPET)
                 .define('Q', Items.QUARTZ_BLOCK)
                 .define('L', Items.LECTERN)
-                .unlockedBy("has_lectern", has(Items.LECTERN))
-                .save(pRecipeOutput);
+                .unlockedBy("has_lectern", has(Items.LECTERN)).save(output);
+
+        // --- Dynamic Metal Recipes ---
+        ModMetals.METALS.forEach((name, metalProperties) -> {
+            // Block to Ingot/Nugget recipes
+            shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.get(name + "_block").get())
+                    .pattern("MMM")
+                    .pattern("MMM")
+                    .pattern("MMM")
+                    .define('M', ModItems.get(name + "_ingot").get())
+                    .unlockedBy("has_" + name + "_ingot", has(ModItems.get(name + "_ingot").get())).save(output);
+
+            shapeless(RecipeCategory.MISC, ModItems.get(name + "_ingot").get(), 9)
+                    .requires(ModBlocks.get(name + "_block").get())
+                    .unlockedBy("has_" + name + "_block", has(ModBlocks.get(name + "_block").get())).save(output, ModBlocks.get(name + "_block").getId().getPath() + "_from_" + ModItems.get(name + "_ingot").getId().getPath());
+
+            shaped(RecipeCategory.MISC, ModItems.get(name + "_ingot").get())
+                    .pattern("NNN")
+                    .pattern("NNN")
+                    .pattern("NNN")
+                    .define('N', ModItems.get(name + "_nugget").get())
+                    .unlockedBy("has_" + name + "_nugget", has(ModItems.get(name + "_nugget").get())).save(output, ModItems.get(name + "_ingot").getId().getPath() + "_from_" + ModItems.get(name + "_nugget").getId().getPath());
+
+            shapeless(RecipeCategory.MISC, ModItems.get(name + "_nugget").get(), 9)
+                    .requires(ModItems.get(name + "_ingot").get())
+                    .unlockedBy("has_" + name + "_ingot", has(ModItems.get(name + "_ingot").get())).save(output, ModItems.get(name + "_nugget").getId().getPath() + "_from_" + ModItems.get(name + "_ingot").getId().getPath());
+
+            shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.get("raw_" + name + "_block").get())
+                    .pattern("RRR")
+                    .pattern("RRR")
+                    .pattern("RRR")
+                    .define('R', ModItems.get("raw_" + name).get())
+                    .unlockedBy("has_raw_" + name, has(ModItems.get("raw_" + name).get())).save(output);
+
+            shapeless(RecipeCategory.MISC, ModItems.get("raw_" + name).get(), 9)
+                    .requires(ModBlocks.get("raw_" + name + "_block").get())
+                    .unlockedBy("has_raw_" + name + "_block", has(ModBlocks.get("raw_" + name + "_block").get())).save(output, ModBlocks.get("raw_" + name + "_block").getId().getPath() + "_from_" + ModItems.get("raw_" + name).getId().getPath());
 
 
-        // --- Platinum Recipes ---
-        nineBlockStorageRecipes(pRecipeOutput, RecipeCategory.BUILDING_BLOCKS, ModBlocks.get("platinum_block").get(), ModItems.get("platinum_ingot").get());
-        nineBlockStorageRecipes(pRecipeOutput, RecipeCategory.MISC, ModItems.get("platinum_ingot").get(), ModItems.get("platinum_nugget").get());
-        nineBlockStorageRecipes(pRecipeOutput, RecipeCategory.BUILDING_BLOCKS, ModBlocks.get("raw_platinum_block").get(), ModItems.get("raw_platinum").get());
-        oreProcessingRecipes(pRecipeOutput, ModBlocks.get("platinum_ore").get(), ModItems.get("raw_platinum").get(), ModItems.get("platinum_ingot").get(),
-                PLATINUM_ORE_XP, PLATINUM_SMELTING_TIME, PLATINUM_BLASTING_TIME);
+            // Ore processing recipes
+            float oreXp = 0.7f; // Default XP
+            int smeltingTime = 200;
+            int blastingTime = 100;
 
-        // --- Silver Recipes ---
-        nineBlockStorageRecipes(pRecipeOutput, RecipeCategory.BUILDING_BLOCKS, ModBlocks.get("silver_block").get(), ModItems.get("silver_ingot").get());
-        nineBlockStorageRecipes(pRecipeOutput, RecipeCategory.MISC, ModItems.get("silver_ingot").get(), ModItems.get("silver_nugget").get());
-        nineBlockStorageRecipes(pRecipeOutput, RecipeCategory.BUILDING_BLOCKS, ModBlocks.get("raw_silver_block").get(), ModItems.get("raw_silver").get());
-        oreProcessingRecipes(pRecipeOutput, ModBlocks.get("silver_ore").get(), ModItems.get("raw_silver").get(), ModItems.get("silver_ingot").get(),
-                SILVER_ORE_XP, SILVER_SMELTING_TIME, SILVER_BLASTING_TIME);
+            if (name.equals("platinum")) {
+                oreXp = 1.0f;
+            } else if (name.equals("silver")) {
+                oreXp = 0.8f;
+            }
+
+            List<ItemLike> oreSmeltables = List.of(ModBlocks.get(name + "_ore").get(), ModItems.get("raw_" + name).get());
+            oreSmelting(output, oreSmeltables, ModItems.get(name + "_ingot").get(), oreXp, smeltingTime, name);
+            oreBlasting(output, oreSmeltables, ModItems.get(name + "_ingot").get(), oreXp, blastingTime, name);
+        });
     }
 
-    /**
-     * Generates a pair of smelting and blasting recipes for a given input.
-     */
-    private void cookingRecipes(@NotNull RecipeOutput pRecipeOutput, @NotNull ItemLike pInput, @NotNull ItemLike pResult, float pExperience, int pSmeltingTime, int pBlastingTime) {
-        String resultName = getItemName(pResult);
-        String inputName = getItemName(pInput);
-
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(pInput), RecipeCategory.MISC, pResult, pExperience, pSmeltingTime)
-                .unlockedBy(getHasName(pInput), has(pInput))
-                .save(pRecipeOutput, resultName + "_from_smelting_" + inputName);
-
-        SimpleCookingRecipeBuilder.blasting(Ingredient.of(pInput), RecipeCategory.MISC, pResult, pExperience, pBlastingTime)
-                .unlockedBy(getHasName(pInput), has(pInput))
-                .save(pRecipeOutput, resultName + "_from_blasting_" + inputName);
+    protected void oreSmelting(RecipeOutput recipeOutput, List<ItemLike> pIngredients, ItemLike pResult,
+                               float pExperience, int pCookingTIme, String pGroup) {
+        oreCooking(recipeOutput, RecipeSerializer.SMELTING_RECIPE, SmeltingRecipe::new, pIngredients, pResult,
+                pExperience, pCookingTIme, pGroup, "_from_smelting");
     }
 
-    /**
-     * Generates all four standard ore processing recipes (smelting and blasting for the ore and its raw form).
-     */
-    private void oreProcessingRecipes(@NotNull RecipeOutput pRecipeOutput, @NotNull ItemLike pOre, @NotNull ItemLike pRaw, @NotNull ItemLike pResult, float pExperience, int pSmeltingTime, int pBlastingTime) {
-        cookingRecipes(pRecipeOutput, pOre, pResult, pExperience, pSmeltingTime, pBlastingTime);
-        cookingRecipes(pRecipeOutput, pRaw, pResult, pExperience, pSmeltingTime, pBlastingTime);
+    protected void oreBlasting(RecipeOutput recipeOutput, List<ItemLike> pIngredients, ItemLike pResult,
+                               float pExperience, int pCookingTime, String pGroup) {
+        oreCooking(recipeOutput, RecipeSerializer.BLASTING_RECIPE, BlastingRecipe::new, pIngredients, pResult,
+                pExperience, pCookingTime, pGroup, "_from_blasting");
     }
 
-    /**
-     * Generates recipes for crafting a 3x3 storage block and converting it back to 9 materials.
-     */
-    private void nineBlockStorageRecipes(@NotNull RecipeOutput pRecipeOutput, @NotNull RecipeCategory pShapedCategory, @NotNull ItemLike pCompact, @NotNull ItemLike pMaterial) {
-        String materialName = getItemName(pMaterial);
-        String compactName = getItemName(pCompact);
-
-        ShapedRecipeBuilder.shaped(pShapedCategory, pCompact)
-                .pattern("MMM")
-                .pattern("MMM")
-                .pattern("MMM")
-                .define('M', pMaterial)
-                .unlockedBy(getHasName(pMaterial), has(pMaterial))
-                .save(pRecipeOutput);
-
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, pMaterial, 9)
-                .requires(pCompact)
-                .unlockedBy(getHasName(pCompact), has(pCompact))
-                .save(pRecipeOutput, compactName + "_from_" + materialName);
+    protected <T extends AbstractCookingRecipe> void oreCooking(RecipeOutput recipeOutput, RecipeSerializer<T> pCookingSerializer, AbstractCookingRecipe.Factory<T> factory, List<ItemLike> pIngredients, ItemLike pResult, float pExperience, int pCookingTime, String pGroup, String pRecipeName) {
+        for (ItemLike itemlike : pIngredients) {
+            SimpleCookingRecipeBuilder.generic(Ingredient.of(itemlike), RecipeCategory.MISC, pResult, pExperience, pCookingTime, pCookingSerializer, factory).group(pGroup).unlockedBy(getHasName(itemlike), has(itemlike))
+                    .save(recipeOutput, Inclinations.MOD_ID + ":" + getItemName(pResult) + pRecipeName + "_" + getItemName(itemlike));
+        }
     }
 }

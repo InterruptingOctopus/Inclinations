@@ -1,24 +1,35 @@
 package com.interruptingoctopus.inclinations;
 
-import java.util.List;
-
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-// An example config class. This is not required, but it's a good idea to have one to keep your config organized.
-// Demonstrates how to use Neo's config APIs
+/**
+ * This class handles the mod's configuration.
+ * It defines configuration options and their default values.
+ */
 public class Config {
-    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+    public static final ModConfigSpec SPEC;
+    public static final Client CLIENT;
 
-    // a list of strings that are treated as resource locations for items
-    public static final ModConfigSpec.ConfigValue<List<? extends String>> ITEM_STRINGS = BUILDER
-            .comment("A list of items to log on common setup.")
-            .defineListAllowEmpty("items", List.of("minecraft:iron_ingot"), () -> "", Config::validateItemName);
+    static {
+        ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
-    static final ModConfigSpec SPEC = BUILDER.build();
+        CLIENT = new Client(BUILDER);
 
-    private static boolean validateItemName(final Object obj) {
-        return obj instanceof String itemName && BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemName));
+        SPEC = BUILDER.build();
+    }
+
+    /**
+     * Client-side configuration options.
+     */
+    public static class Client {
+        public ModConfigSpec.IntValue exampleValue;
+
+        public Client(ModConfigSpec.Builder builder) {
+            builder.push("client");
+            exampleValue = builder
+                    .comment("An example client-side configuration value.")
+                    .defineInRange("exampleValue", 10, 0, 100);
+            builder.pop();
+        }
     }
 }

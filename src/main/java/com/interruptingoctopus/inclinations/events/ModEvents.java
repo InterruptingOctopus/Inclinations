@@ -1,15 +1,12 @@
 package com.interruptingoctopus.inclinations.events;
 
-import com.interruptingoctopus.inclinations.client.gui.ModCustomOverlay;
 import com.interruptingoctopus.inclinations.client.gui.PlayerAttributeMenuScreen;
 import com.interruptingoctopus.inclinations.client.gui.PlayerAttributeMenuTabButton;
 import com.interruptingoctopus.inclinations.client.gui.PlayerInventoryTabButton;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -19,21 +16,30 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
+/**
+ * Handles various client-side events for the Inclinations mod,
+ * such as GUI rendering and screen initialization.
+ */
 public class ModEvents {
 
+    /**
+     * Logger for ModEvents.
+     */
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final ModCustomOverlay CUSTOM_HUNGER_OVERLAY = new ModCustomOverlay();
+    // The ModCustomOverlay is now handled entirely by its own @EventBusSubscriber for the RegisterGuiLayersEvent.
+    // An instance is no longer needed here.
 
-    // Fields to hold references to our custom tab buttons
-    private static PlayerInventoryTabButton inventoryTabButton;
-    private static PlayerAttributeMenuTabButton attributeTabButton;
-
+    /**
+     * Registers client-side event listeners.
+     *
+     * @param event The FMLClientSetupEvent.
+     */
     @SuppressWarnings("unused")
     public static void registerClientEvents(final FMLClientSetupEvent event) {
         LOGGER.info("Registering client events for Inclinations mod.");
         // Register RenderGuiLayerEvent listeners for HUD modifications
         NeoForge.EVENT_BUS.addListener(ModEvents::onRenderGuiPre);
-        NeoForge.EVENT_BUS.addListener(ModEvents::onRenderGuiPost);
+        // The onRenderGuiPost listener is no longer needed as the overlay is registered via RegisterGuiLayersEvent.
         // Register ScreenEvent.Render.Pre listener for inventory screen modifications
         NeoForge.EVENT_BUS.addListener(ModEvents::onScreenRenderPre);
         // Register ScreenEvent.Render.Post listener for rendering active tabs on top
@@ -42,33 +48,38 @@ public class ModEvents {
         NeoForge.EVENT_BUS.addListener(ModEvents::onScreenInitPost);
     }
 
+    /**
+     * Event handler for pre-rendering GUI layers.
+     * Used to cancel vanilla armor and food level rendering.
+     * @param event The RenderGuiLayerEvent.Pre event.
+     */
     private static void onRenderGuiPre(RenderGuiLayerEvent.Pre event) {
-        // Cancel vanilla armor and food level rendering
+        // Cancel vanilla armor and food level rendering.
+        // The custom hunger overlay is rendered automatically via RegisterGuiLayersEvent.
         if (event.getName().equals(VanillaGuiLayers.ARMOR_LEVEL) ||
                 event.getName().equals(VanillaGuiLayers.FOOD_LEVEL)) {
             event.setCanceled(true);
         }
     }
 
-    private static void onRenderGuiPost(RenderGuiLayerEvent.Post event) {
-        // Only render our custom hunger overlay after the EFFECTS layer to ensure it's on top of hearts.
-        if (event.getName().equals(VanillaGuiLayers.EFFECTS)) {
-            Minecraft minecraft = Minecraft.getInstance();
-            Player player = minecraft.player;
-            GuiGraphics graphics = event.getGuiGraphics();
+    // The onRenderGuiPost method has been removed as it is no longer necessary.
+    // The custom hunger overlay is now rendered automatically by the system
+    // because it was registered in ModCustomOverlay using the RegisterGuiLayersEvent.
 
-            if (player == null || minecraft.options.hideGui || minecraft.gameMode == null || !minecraft.gameMode.canHurtPlayer()) {
-                return;
-            }
-            // Render our custom hunger overlay
-            CUSTOM_HUNGER_OVERLAY.render(graphics, graphics.guiWidth(), graphics.guiHeight());
-        }
-    }
-
+    /**
+     * Event handler for pre-rendering screens.
+     * @param event The ScreenEvent.Render.Pre event.
+     */
     @SuppressWarnings("unused")
     private static void onScreenRenderPre(ScreenEvent.Render.Pre event) {
+        // Currently empty, but can be used for future pre-render screen modifications.
     }
 
+    /**
+     * Event handler for post-rendering screens.
+     * Used to render active tab buttons on top of other GUI elements.
+     * @param event The ScreenEvent.Render.Post event.
+     */
     private static void onScreenRenderPost(ScreenEvent.Render.Post event) {
         // After everything else is rendered, find the active tab and render it on top.
         for (Renderable renderable : event.getScreen().renderables) {
@@ -80,32 +91,41 @@ public class ModEvents {
         }
     }
 
+    /**
+     * Event handler for post-initialization of screens.
+     * Used to add custom tab buttons to inventory and attribute screens.
+     * @param event The ScreenEvent.Init.Post event.
+     */
     private static void onScreenInitPost(ScreenEvent.Init.Post event) {
         int guiLeft = 0;
         int guiTop = 0;
         boolean shouldAddButtons = false;
 
         if (event.getScreen() instanceof InventoryScreen inventoryScreen) {
-            LOGGER.info("ScreenEvent.Init.Post fired for InventoryScreen.");
             guiLeft = inventoryScreen.getGuiLeft();
             guiTop = inventoryScreen.getGuiTop();
             shouldAddButtons = true;
         } else if (event.getScreen() instanceof PlayerAttributeMenuScreen attributeScreen) {
-            LOGGER.info("ScreenEvent.Init.Post fired for PlayerAttributeMenuScreen.");
             guiLeft = attributeScreen.getGuiLeft();
             guiTop = attributeScreen.getGuiTop();
             shouldAddButtons = true;
         }
 
         if (shouldAddButtons) {
-            inventoryTabButton = createPlayerInventoryTabButton(guiLeft, guiTop);
+            PlayerInventoryTabButton inventoryTabButton = createPlayerInventoryTabButton(guiLeft, guiTop);
             event.addListener(inventoryTabButton);
 
-            attributeTabButton = createPlayerAttributeMenuTabButton(guiLeft, guiTop);
+            PlayerAttributeMenuTabButton attributeTabButton = createPlayerAttributeMenuTabButton(guiLeft, guiTop);
             event.addListener(attributeTabButton);
         }
     }
 
+    /**
+     * Creates a new PlayerInventoryTabButton instance.
+     * @param guiLeft The x-coordinate of the GUI's left edge.
+     * @param guiTop The y-coordinate of the GUI's top edge.
+     * @return A new PlayerInventoryTabButton.
+     */
     private static PlayerInventoryTabButton createPlayerInventoryTabButton(int guiLeft, int guiTop) {
         int tabX = guiLeft + 28;
         int tabY = guiTop - 30;
@@ -123,6 +143,12 @@ public class ModEvents {
         );
     }
 
+    /**
+     * Creates a new PlayerAttributeMenuTabButton instance.
+     * @param guiLeft The x-coordinate of the GUI's left edge.
+     * @param guiTop The y-coordinate of the GUI's top edge.
+     * @return A new PlayerAttributeMenuTabButton.
+     */
     private static PlayerAttributeMenuTabButton createPlayerAttributeMenuTabButton(int guiLeft, int guiTop) {
         int tabX = guiLeft + 56;
         int tabY = guiTop - 30;

@@ -1,67 +1,83 @@
 package com.interruptingoctopus.inclinations.screen;
 
-import com.interruptingoctopus.inclinations.block.ModBlocks;
-import com.interruptingoctopus.inclinations.block.entity.AltarBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The container menu for the Altar block.
+ * This class defines the slots and interaction logic for the Altar's GUI.
+ */
 public class AltarMenu extends AbstractContainerMenu {
-    public final AltarBlockEntity blockEntity;
-    private final Level level;
 
-    @SuppressWarnings("resource")
-    public AltarMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()));
-    }
-
-    public AltarMenu(int pContainerId, Inventory inv, BlockEntity entity) {
+    /**
+     * Constructor for AltarMenu.
+     *
+     * @param pContainerId     The unique ID for this container.
+     * @param pPlayerInventory The player's inventory.
+     */
+    public AltarMenu(int pContainerId, Inventory pPlayerInventory) {
         super(ModMenuTypes.ALTAR_MENU.get(), pContainerId);
-        checkContainerSize(inv, 3);
-        this.blockEntity = (AltarBlockEntity) entity;
-        this.level = inv.player.level();
-
-        addPlayerInventory(inv);
-        addPlayerHotbar(inv);
-
-        if (this.blockEntity != null) {
-            IItemHandler handler = this.blockEntity; // Direct cast as AltarBlockEntity now implements IItemHandler
-            this.addSlot(new SlotItemHandler(handler, 0, 26, 47));
-            this.addSlot(new SlotItemHandler(handler, 1, 76, 47));
-            this.addSlot(new SlotItemHandler(handler, 2, 134, 47));
-        }
+        // Add slots for the altar and player inventory here
+        // Example: this.addSlot(new Slot(blockEntity, 0, 80, 35));
+        // Layout player inventory
+        layoutPlayerInventory(pPlayerInventory);
     }
 
-    @NotNull
+    /**
+     * Constructor for AltarMenu, used when opening from a FriendlyByteBuf.
+     *
+     * @param pContainerId     The unique ID for this container.
+     * @param pPlayerInventory The player's inventory.
+     * @param pBuffer          The FriendlyByteBuf containing additional data (e.g., block entity position).
+     */
+    public AltarMenu(int pContainerId, Inventory pPlayerInventory, FriendlyByteBuf pBuffer) {
+        this(pContainerId, pPlayerInventory);
+        // Handle additional data from buffer if needed
+    }
+
+    /**
+     * Determines if the player can interact with this container.
+     * @param pPlayer The player interacting.
+     * @return True if the player can interact, false otherwise.
+     */
     @Override
-    public ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) {
+    public boolean stillValid(net.minecraft.world.entity.player.@NotNull Player pPlayer) {
+        // Implement logic to check if the player is still close enough to the altar
+        return true;
+    }
+
+    /**
+     * Handles shift-clicking items between inventory and altar.
+     * @param pPlayer The player performing the shift-click.
+     * @param pIndex The index of the slot that was clicked.
+     * @return The ItemStack remaining after the transfer.
+     */
+    @Override
+    public @NotNull ItemStack quickMoveStack(net.minecraft.world.entity.player.@NotNull Player pPlayer, int pIndex) {
+        // Implement quick move logic
         return ItemStack.EMPTY;
     }
 
-    @Override
-    public boolean stillValid(@NotNull Player pPlayer) {
-        return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
-                pPlayer, ModBlocks.ALTAR.get());
-    }
-
-    private void addPlayerInventory(Inventory playerInventory) {
-        for (int i = 0; i < 3; ++i) {
-            for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18));
+    /**
+     * Lays out the player's inventory and hotbar slots.
+     *
+     * @param pPlayerInventory The player's inventory.
+     */
+    private void layoutPlayerInventory(Inventory pPlayerInventory) {
+        // Player inventory
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 9; ++col) {
+                this.addSlot(new Slot(pPlayerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
             }
         }
-    }
 
-    private void addPlayerHotbar(Inventory playerInventory) {
-        for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
+        // Player hotbar
+        for (int col = 0; col < 9; ++col) {
+            this.addSlot(new Slot(pPlayerInventory, col, 8 + col * 18, 142));
         }
     }
 }

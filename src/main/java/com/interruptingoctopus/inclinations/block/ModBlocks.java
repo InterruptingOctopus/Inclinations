@@ -1,7 +1,7 @@
 package com.interruptingoctopus.inclinations.block;
 
 import com.interruptingoctopus.inclinations.Inclinations;
-import com.interruptingoctopus.inclinations.item.ModItems;
+import com.interruptingoctopus.inclinations.util.ModMetals;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -13,68 +13,88 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+/**
+ * Utility class for managing and registering all custom blocks in the Inclinations mod.
+ */
 public class ModBlocks {
+    /**
+     * Deferred register for blocks.
+     */
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Inclinations.MOD_ID);
 
-    // A map to hold all our registered blocks by name
+    /**
+     * A map to hold all registered blocks by name for easy retrieval.
+     */
     public static final Map<String, DeferredBlock<Block>> REGISTERED_BLOCKS = new HashMap<>();
 
-    // --- Block Properties Helpers ---
-    private static BlockBehaviour.Properties createMetalBlockProperties() {
-        return BlockBehaviour.Properties.of()
-                .strength(4f)
-                .requiresCorrectToolForDrops()
-                .sound(SoundType.METAL);
-    }
+    /**
+     * The Altar block.
+     */
+    public static final DeferredBlock<Block> ALTAR = registerBlock("altar",
+            () -> new AltarBlock(BlockBehaviour.Properties.of().strength(4.0F).sound(SoundType.WOOD)));
 
-    private static BlockBehaviour.Properties createOreProperties() {
-        return BlockBehaviour.Properties.of()
-                .strength(4f)
-                .requiresCorrectToolForDrops()
-                .sound(SoundType.STONE);
-    }
-
-    private static BlockBehaviour.Properties createAltarProperties() {
-        return BlockBehaviour.Properties.of()
-                .strength(2.0f)
-                .noOcclusion() // For custom models that aren't full cubes
-                .sound(SoundType.STONE);
-    }
-
-    // Helper to register a single block and add it to the map for automatic item registration
-    private static void registerBlock(String name, Supplier<Block> blockSupplier) {
-        DeferredBlock<Block> block = BLOCKS.register(name, blockSupplier);
-        REGISTERED_BLOCKS.put(name, block);
-    }
-
-    // Helper to register a block without adding it to the automatic item registration map
-    private static <T extends Block> DeferredBlock<T> register(String name, Supplier<T> block) {
-        return BLOCKS.register(name, block);
-    }
-
-    // --- Custom Blocks ---
-    // Register the altar block without adding it to the map for automatic item registration
-    public static final DeferredBlock<Block> ALTAR = register("altar", () -> new AltarBlock(createAltarProperties()));
-
-
-    // Static initializer block to run the registration for all metals and gems
     static {
-        ModItems.METALS.forEach(ModBlocks::registerMetalBlocks); // Reuse METALS list from ModItems
+        // Register blocks for each metal defined in ModMetals
+        ModMetals.METALS.forEach((name, metal) -> registerMetalBlocks(name, metal.properties()));
     }
 
-    // Helper to register all standard blocks for a metal
-    private static void registerMetalBlocks(String name) {
-        registerBlock(name + "_block", () -> new Block(createMetalBlockProperties()));
-        registerBlock(name + "_ore", () -> new Block(createOreProperties()));
-        registerBlock("raw_" + name + "_block", () -> new Block(createMetalBlockProperties()));
+
+    /**
+     * Helper method to register a single block and add it to the REGISTERED_BLOCKS map.
+     *
+     * @param name          The name of the block.
+     * @param blockSupplier The block supplier.
+     * @param <T>           The type of the block, must extend Block.
+     * @return The registered block.
+     */
+    @SuppressWarnings("unchecked")
+    private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> blockSupplier) {
+        DeferredBlock<T> block = BLOCKS.register(name, blockSupplier);
+        REGISTERED_BLOCKS.put(name, (DeferredBlock<Block>) block);
+        return block;
     }
 
-    // Method to retrieve a block by its registered name
+    /**
+     * Helper to register all standard blocks for a metal (block, ore, raw block).
+     *
+     * @param name       The name of the metal.
+     * @param properties The properties of the metal.
+     */
+    private static void registerMetalBlocks(String name, ModMetals.MetalProperties properties) {
+        // Construct BlockBehaviour.Properties inside the lambda using raw values
+        registerBlock(name + "_block", () -> new Block(BlockBehaviour.Properties.of()
+                .strength(properties.blockStrength(), properties.blockExplosionResistance())
+                .sound(properties.blockSoundType())
+                .requiresCorrectToolForDrops()));
+
+        registerBlock(name + "_ore", () -> new Block(BlockBehaviour.Properties.of()
+                .strength(properties.oreStrength(), properties.oreExplosionResistance())
+                .sound(properties.oreSoundType())
+                .requiresCorrectToolForDrops()));
+
+        registerBlock("raw_" + name + "_block", () -> new Block(BlockBehaviour.Properties.of()
+                .strength(properties.blockStrength(), properties.blockExplosionResistance())
+                .sound(properties.blockSoundType())
+                .requiresCorrectToolForDrops()));
+    }
+
+    /**
+     * Retrieves a registered block by its name.
+     * @param name The name of the block.
+     * @return The registered block, or null if not found.
+     */
     public static DeferredBlock<Block> get(String name) {
+
         return REGISTERED_BLOCKS.get(name);
     }
 
+    /**
+     * Registers the deferred register for blocks with the event bus.
+     * This method should be called during mod construction.
+     * @param eventBus The event bus.
+     */
     public static void register(IEventBus eventBus) {
+
         BLOCKS.register(eventBus);
     }
 }

@@ -1,77 +1,112 @@
 package com.interruptingoctopus.inclinations;
 
-import com.interruptingoctopus.inclinations.recipe.ModRecipes;
 import com.interruptingoctopus.inclinations.block.ModBlocks;
 import com.interruptingoctopus.inclinations.block.entity.ModBlockEntities;
-import com.interruptingoctopus.inclinations.datagen.DataGenerators;
 import com.interruptingoctopus.inclinations.events.ModEvents;
 import com.interruptingoctopus.inclinations.item.ModCreativeModeTabs;
 import com.interruptingoctopus.inclinations.item.ModItems;
-import com.interruptingoctopus.inclinations.screen.AltarScreen;
-import com.interruptingoctopus.inclinations.screen.ModMenuTypes;
+import com.interruptingoctopus.inclinations.recipe.ModRecipes;
+import com.mojang.logging.LogUtils;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import org.slf4j.Logger;
 
-// The value here should match an entry in the META-INF/neoforge.mods.toml file
+/**
+ * The main mod class for Inclinations.
+ * This class is the entry point for the mod and handles the registration of all mod content.
+ */
 @Mod(Inclinations.MOD_ID)
 public class Inclinations {
+    /**
+     * The unique identifier for the mod.
+     */
     public static final String MOD_ID = "inclinations";
+    private static final Logger LOGGER = LogUtils.getLogger();
 
+    /**
+     * Constructor for the Inclinations mod.
+     * This is where all the registration for the mod happens.
+     *
+     * @param modEventBus  The event bus for the mod.
+     * @param modContainer The container for the mod.
+     */
     public Inclinations(IEventBus modEventBus, ModContainer modContainer) {
-        // Register the commonSetup method for mod loading
+        LOGGER.info("Hello from Inclinations!"); // Using the logger
+        // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-        // Register the clientSetup method for client-side initialization
-        modEventBus.addListener(this::clientSetup);
-        // Register the data generation event listener
-        modEventBus.addListener(DataGenerators::gatherData);
 
+        // Register ourselves for server and other game events we are interested in.
+        NeoForge.EVENT_BUS.register(this);
 
-        // IMPORTANT: ModBlocks must be registered before ModItems due to BlockItem dependencies.
-        ModBlocks.register(modEventBus); // Blocks and their BlockItems are registered here
-        ModItems.register(modEventBus);  // Pure items are registered here
+        // Register all deferred registers
+        ModBlocks.register(modEventBus);
+        ModItems.ITEMS.register(modEventBus); // Corrected registration
         ModItems.registerBlockItems(); // Call this to register BlockItems after blocks are registered
+        ModBlockEntities.register(modEventBus);
         ModRecipes.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
-        ModMenuTypes.register(modEventBus);
-        ModBlockEntities.register(modEventBus);
 
-        // Register ourselves for server and other game events we are interested in (Game Bus)
-        NeoForge.EVENT_BUS.register(this); // This registers @SubscribeEvent methods in this class
+        // Register the item to a creative tab
+        modEventBus.addListener(this::addCreative);
 
-        // Register ModEvents to the mod event bus for client-side events
-        modEventBus.addListener(ModEvents::registerClientEvents);
-        // Removed: modEventBus.addListener(ModEvents::onRegisterGuiLayers); // Removed listener for GUI layer registration
+        // Register the data generator
 
         // Register our mod's ModConfigSpec
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-
-        modEventBus.addListener(this::registerScreens);
     }
 
+    /**
+     * Common setup logic, called during mod loading.
+     * @param event The common setup event.
+     */
     private void commonSetup(final FMLCommonSetupEvent event) {
         // Put your Common Setup Logic here
     }
 
-    // Modern, non-static method to handle client setup
-    private void clientSetup(final FMLClientSetupEvent event) {
-        // Client-side initialization code goes here
+    /**
+     * Adds items to creative mode tabs.
+     *
+     * @param event The BuildCreativeModeTabContentsEvent.
+     */
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        // Removed empty if statements
     }
 
-    public void registerScreens(final RegisterMenuScreensEvent event) {
-        event.register(ModMenuTypes.ALTAR_MENU.get(), AltarScreen::new);
-    }
-
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
+    /**
+     * Called when the server is starting.
+     * @param event The server starting event.
+     */
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         // Put your Server Starting Logic here
+    }
+
+    /**
+     * Client-side event subscriber for Inclinations.
+     * This class handles client-specific registrations and setups.
+     */
+    @EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT) // Corrected EventBusSubscriber usage
+    public static class ClientModEvents {
+        /**
+         * Client setup logic, called during mod loading on the client.
+         *
+         * @param event The client setup event.
+         */
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event) {
+            ModEvents.registerClientEvents(event);
+            // Client-side initialization code goes here
+            // Example: ItemBlockRenderTypes.setRenderLayer(ModBlocks.SOME_BLOCK.get(), RenderType.cutout());
+        }
     }
 }
