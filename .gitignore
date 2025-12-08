@@ -24,3 +24,10 @@ runs
 run-data
 
 repo
+
+
+*.zencoder
+docs
+rules
+/.zencoder/rules/
+/.zencoder/
